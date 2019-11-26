@@ -5,10 +5,17 @@ module.exports = {
   allRecipes,
   findRecipeById,
   searchByTitle,
-  findByTitle
+  findByTitle,
+  deleteById
 };
 
 // support functions:
+
+function deleteById(recipeID,cookID) {
+  console.log('recipeID', recipeID, 'cookID', cookID);
+  return db('recipes').where('id',recipeID).del()
+}
+
 
 function forceNumber(val) {
   return val ? parseInt(val) : 0;
@@ -152,16 +159,26 @@ function findByTitle(title) {
     .select(['r.id', 'r.title', 'r.minutes', 'r.img', 'e.cook_id', 'c.username']);
 }
 
-
-async function allRecipes() {
-
-  const recipeAncestor = await db('recipes as r')
-    .where({ 'r.id': 5 })
+async function getRecipeAncestor(id) {
+ const ancestor = await db('recipes as r')
+    .where({ 'r.id': id })
     .join('edits as e', 'e.new_recipe', 'r.id')
-    .select('e.old_recipe').whereIn('e.new_recipe', [5])
+    .select('e.old_recipe').whereIn('e.new_recipe', [id])
     .first();
+
+  return ancestor;
+}
+
+
+function allRecipes() {
+
+  // const recipeAncestor = await db('recipes as r')
+  //   .where({ 'r.id': 5 })
+  //   .join('edits as e', 'e.new_recipe', 'r.id')
+  //   .select('e.old_recipe').whereIn('e.new_recipe', [5])
+  //   .first();
   
-  console.log('recipeAncestor for recipe #5', recipeAncestor);
+  // console.log('recipeAncestor for recipe #5', recipeAncestor);
 
 
   return db.with('tmpSaves', (qb) => {
@@ -183,7 +200,13 @@ async function allRecipes() {
       ...recipe,
       total_saves: forceNumber(recipe.total_saves)
     })))
-    .then(recipes => {
+    .then(async recipes => {
+      for (rec of recipes) {
+        const {old_recipe} = await getRecipeAncestor(rec.id);
+        rec.ancestor = old_recipe;
+        console.log('recipe.ancestor', rec.ancestor);
+      }
+      
       return [...recipes].sort(higherProp('total_saves'));
     });
 }

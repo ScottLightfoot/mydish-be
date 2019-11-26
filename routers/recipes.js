@@ -30,8 +30,16 @@ router.get('/:id', (req, res) => {
 //delete a recipe (removes from cookbook if recipe is saved by another user)
 router.delete('/:id', mid.restrict, (req, res) => {
   Recipes.deleteById(req.params.id, req.cook.id)
-    .then(() => { res.status(204).end() })
-    .catch(err => { res.status(501); });
+    .then((deleted) => {
+      console.log('res from delete', deleted); 
+      if (deleted) {
+        res.status(200).json({message: `recipe with id# ${req.params.id} deleted...`}) 
+      } else {
+        res.status(404).json({error : `error deleting recipe with id ${req.params.id}. not found...`})
+      }
+      
+    })
+    .catch(err => { res.status(501) });
 });
 
 
