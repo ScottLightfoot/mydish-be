@@ -7,7 +7,7 @@ const cookbook = require('../data/cookbookModel.js');
 router.get('/all', (req, res) => {
   Recipes.allRecipes()
     .then(x => { res.status(200).json(x); })
-    .catch(err => { res.status(501).json(err); });
+    .catch(err => { console.log('error getting recipes', err.message); res.status(501).json(err.message); });
 });
 
 //search by title

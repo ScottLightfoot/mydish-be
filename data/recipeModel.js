@@ -153,7 +153,16 @@ function findByTitle(title) {
 }
 
 
-function allRecipes() {
+async function allRecipes() {
+
+  const recipeAncestor = await db('recipes as r')
+    .where({ 'r.id': 5 })
+    .join('edits as e', 'e.new_recipe', 'r.id')
+    .select('e.old_recipe').whereIn('e.new_recipe', [5])
+    .first();
+  
+  console.log('recipeAncestor for recipe #5', recipeAncestor);
+
 
   return db.with('tmpSaves', (qb) => {
     qb
