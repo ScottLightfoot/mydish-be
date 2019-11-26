@@ -39,7 +39,7 @@ router.delete('/:id', mid.restrict, (req, res) => {
       }
       
     })
-    .catch(err => { res.status(501) });
+    .catch(err => { res.status(500).json({error: `a server error occurred: ${err.message}`}) });
 });
 
 
