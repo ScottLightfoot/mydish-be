@@ -49,16 +49,16 @@ describe("get_all", () => {
 
   test("Returns array of all recipes that match the search", async () => {
     const search_recipes = await recipes_model.get_all("egg");
-    const test_eggplant = search_recipes.filter(recipe => recipe.id === 1)[0]
-    const test_cereal = search_recipes.filter(recipe => recipe.id === 2)[0]
-    const test_eggs = search_recipes.filter(recipe => recipe.id === 3)[0]
+    const test_eggplant = search_recipes.filter(recipe => recipe.id === 1)[0];
+    const test_cereal = search_recipes.filter(recipe => recipe.id === 2)[0];
+    const test_eggs = search_recipes.filter(recipe => recipe.id === 3)[0];
 
     // Checking that the response is an array of 4 entries
     expect(search_recipes.length).toBe(2);
     expect(Array.isArray(search_recipes)).toBe(true);
 
     // Making sure that cereal was NOT returned
-    expect(test_cereal).toBeUndefined()
+    expect(test_cereal).toBeUndefined();
 
     // Making sure the titles match
     expect(test_eggplant.title).toMatch(/eggplant/i);
@@ -70,5 +70,10 @@ describe("get_all", () => {
     expect(test_eggs.owner.user_id).toBe(2);
     expect(test_eggs.owner.username).toMatch(/lou/i);
   });
+});
 
+describe("get_one", () => {
+  test("Returns full recipe with all joins", async () => {
+    const test_cereal = await recipes_model.get_one({ id: 2 });
+  });
 });
