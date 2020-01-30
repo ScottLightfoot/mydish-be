@@ -28,15 +28,19 @@ server.use(users_router)
 
 describe("POST /users/register", () => {
   test("Returns status 200 if successful", async () => {
-    const user = {
+    const new_user = {
       username: "Brian",
       password: "briantest"
     }
 
+    validate.generate_token = jest.fn(user => {
+      return { token: "token", exp_date: new Date(4500) }
+    })
+
     users_model.add_one = jest.fn(
       () =>
         new Promise(res => {
-          setTimeout(() => res(1), 0)
+          setTimeout(() => res({ id: res.id, username: res.username }), 0)
         })
     )
 
@@ -46,14 +50,14 @@ describe("POST /users/register", () => {
       })
     })
     const expected_user = {
-      ...user,
-      id: 1,
-      test: true
+      message: `Welcome, new user.`,
+      user: { id: 1, username: new_user.username },
+      token: { token: "token", exp_date: new Date(4500).toISOString() }
     }
 
     const response = await request(server)
       .post("/users/register")
-      .send(user)
+      .send(new_user)
       .set("Accept", "application/json")
 
     expect(response.status).toEqual(200)
