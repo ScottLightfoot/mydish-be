@@ -4,9 +4,10 @@ module.exports = {
   development: {
     client: "pg",
     connection: {
-      database: process.env.DB_NAME,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD
+      host: process.env.DB_HOST_DEV,
+      database: process.env.DB_NAME_DEV,
+      user: process.env.DB_USER_DEV,
+      password: process.env.DB_PASSWORD_DEV
     },
     migrations: {
       directory: "./data/migrations"
@@ -17,7 +18,12 @@ module.exports = {
   },
   production: {
     client: "pg",
-    connection: process.env.DATABASE_URL,
+    connection: {
+      host: process.env.DB_HOST_PROD,
+      database: process.env.DB_NAME_PROD,
+      user: process.env.DB_USER_PROD,
+      password: process.env.DB_PASSWORD_PROD
+    },
     migrations: {
       directory: "./data/migrations"
     },
@@ -27,10 +33,11 @@ module.exports = {
   },
   testing: {
     client: "pg",
-    connection: process.env.DATABASE_TEST_URL || {
-      database: process.env.DB_TEST_NAME,
-      user: process.env.DB_TEST_USER,
-      password: process.env.DB_TEST_PASSWORD
+    connection: {
+      host: process.env.DB_HOST_TEST,
+      database: process.env.DB_NAME_TEST,
+      user: process.env.DB_USER_TEST,
+      password: process.env.DB_PASSWORD_TEST
     },
     migrations: {
       directory: "./data/migrations"
