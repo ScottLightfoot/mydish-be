@@ -3,25 +3,14 @@ const uuid = require("uuid");
 const multer = require("multer");
 const multers3 = require("multer-s3");
 
-const bucketName = process.env.S3_BUCKET_NAME;
+const bucketName = `amplify-mydish-be-dev-174150-deployment`;
 
-aws.config.credentials = {
-  expired: false,
-  expireTime: null,
-  refreshCallbacks: [],
-  accessKeyId: process.env.S3_IAM_USER_KEY,
-  sessionToken: undefined,
-  filename: undefined,
-  disableAssumeRole: false,
-  preferStaticCredentials: false,
-  tokenCodeFn: null,
-  httpOptions: null
-};
-
-const s3 = new aws.S3({
-  accessKeyId: process.env.S3_IAM_USER_KEY,
-  secretAccessKey: process.env.S3_IAM_USER_SECRET
+var credentials = new aws.SharedIniFileCredentials({
+  profile: "mydishaws"
 });
+aws.config.credentials = credentials;
+
+const s3 = new aws.S3();
 
 const fileFilter = (request, file, cb) => {
   console.log("fileFilter executing");
